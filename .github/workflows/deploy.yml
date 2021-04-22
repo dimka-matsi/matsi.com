@@ -24,6 +24,6 @@ jobs:
       - run: chmod 600 "$HOME/.ssh/MELLO_PRIVATE_KEY"
       # build
       - run: npm ci
-      - run: npm install && npm run build
+      - run: npm run build
       # deploy
       - run: cd dist && rsync -e "ssh -i $HOME/.ssh/MELLO_PRIVATE_KEY -0 StrictHostKeyChecking=no" . mello@mello.one:/var/www/mello.one/html
