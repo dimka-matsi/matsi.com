@@ -20,10 +20,13 @@ jobs:
       # setup key
       - run: set -eu
       - run: mkdir "$HOME/.ssh"
-      - run: echo "${{ secrets.key }}" > "$HOME/.ssh/MELLO_PRIVATE_KEY"
+      - run: echo "${{ secrets.MELLO_PRIVATE_KEY }}" > "$HOME/.ssh/MELLO_PRIVATE_KEY"
       - run: chmod 600 "$HOME/.ssh/MELLO_PRIVATE_KEY"
       # build
       - run: npm ci
       - run: npm run build
       # deploy
-      - run: cd dist -e "ssh -i $HOME/.ssh/MELLO_PRIVATE_KEY -o StrictHostKeyChecking=no" . mello@mello.one:/var/www/mello.one/html
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.MELLO_PRIVATE_KEY }}
+          publish_dir: ./dist
