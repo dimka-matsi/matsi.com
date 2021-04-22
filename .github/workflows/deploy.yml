@@ -1,32 +1,19 @@
-name: Deploy
+name: Quality assurance
 
-on:
-  pull_request:
-  push:
-    branches:
-      - master
+on: [push]
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      # setup key
-      - run: set -eu
-      - run: mkdir "$HOME/.ssh"
-      - run: echo "${{ secrets.key }}" > "$HOME/.ssh/MELLO_PRIVATE_KEY"
-      - run: chmod 600 "$HOME/.ssh/MELLO_PRIVATE_KEY"
-      # build
-      - run: npm ci
-      - run: npm run build
-      # deploy
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.key }}
-          publish_dir: ./dist
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build check
+      run: npm run build
+
+    - name: Docker build check
+      run: docker build -f docker/Dockerfile .
